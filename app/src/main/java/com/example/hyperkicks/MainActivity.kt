@@ -2,6 +2,7 @@ package com.example.hyperkicks
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -9,11 +10,14 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.hyperkicks.databinding.ActivityMainBinding
 import com.example.hyperkicks.model.ShoeModel
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
+    lateinit var shoeList: MutableList<ShoeModel>
+    val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +33,34 @@ class MainActivity : AppCompatActivity() {
         }
 
         //seedDatabase()
+
+        shoeList = mutableListOf()
+
+        fetchDataFromDatabase()
     }
+
+    private fun fetchDataFromDatabase() {
+        db.collection("sneakers")
+            .get()
+            .addOnSuccessListener { documents ->
+                shoeList.clear()
+                for (doc in documents) {
+                    val brand = doc.getString("brand") ?: "adidas"
+                    val modelName = doc.getString("modelName") ?: "Samba Vegan White Black"
+                    val releaseYear = doc.getLong("releaseYear")?.toInt() ?: 6767
+                    val resellPrice = doc.getLong("resellPrice")?.toInt() ?: 420
+                    val imageUrl = doc.getString("imageUrl") ?: "https://i.postimg.cc/bNJC21YC/xd.webp"
+
+                    shoeList.add(ShoeModel(brand, modelName, releaseYear, resellPrice, imageUrl))
+                }
+                //adapter.notifyDataSetChanged()
+                Toast.makeText(this, "Załadowano ${shoeList.size} butów!!", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener { exception ->
+                Log.e("FIREBASE_ERROR", "Błąd pobierania danych: ", exception)
+                Toast.makeText(this, "Błąd pobierania danych z chmury!", Toast.LENGTH_LONG).show()
+            }
+    }
+
 
     private fun seedDatabase() {
         val shoeList = listOf(
