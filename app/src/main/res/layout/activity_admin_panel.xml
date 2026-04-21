@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PANEL SZEFA - DODAJ BUTY"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText android:id="@+id/etBrand" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Marka (np. Nike)"/>
+    <EditText android:id="@+id/etModel" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Model (np. Air Jordan 1)"/>
+    <EditText android:id="@+id/etYear" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Rok wydania" android:inputType="number"/>
+    <EditText android:id="@+id/etPrice" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Cena (PLN)" android:inputType="number"/>
+    <EditText android:id="@+id/etImageUrl" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Link do zdjęcia"/>
+
+    <Button
+        android:id="@+id/btnAddShoe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DODAJ DO BAZY"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lista w bazie (Przytrzymaj by usunąć):"
+        android:layout_marginTop="16dp"
+        android:textStyle="italic"/>
+
+    <ListView
+        android:id="@+id/adminListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>
