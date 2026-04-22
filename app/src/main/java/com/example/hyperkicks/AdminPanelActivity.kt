@@ -1,5 +1,6 @@
 package com.example.hyperkicks
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -12,8 +13,10 @@ class AdminPanelActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAdminPanelBinding
     private val db = FirebaseFirestore.getInstance()
+
     private val adminShoeList = mutableListOf<ShoeModel>()
     private val shoeNames = mutableListOf<String>()
+    private var editingShoeId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,12 +27,16 @@ class AdminPanelActivity : AppCompatActivity() {
         fetchDataForAdmin()
 
         binding.btnAddShoe.setOnClickListener {
-            addShoeToFirestore()
+            handleFormSubmit()
+        }
+
+        binding.adminListView.setOnItemClickListener { _, _, position, _ ->
+            loadShoeIntoForm(position)
         }
 
         binding.adminListView.setOnItemLongClickListener { _, _, position, _ ->
             val shoeToDelete = adminShoeList[position]
-            deleteShoe(shoeToDelete.id, position)
+            deleteShoe(shoeToDelete.id)
             true
         }
     }
@@ -41,44 +48,85 @@ class AdminPanelActivity : AppCompatActivity() {
 
     private fun fetchDataForAdmin() {
         db.collection("sneakers").addSnapshotListener { snapshots, _ ->
-            adminShoeList.clear()
-            shoeNames.clear()
-            snapshots?.forEach { doc ->
-                val shoe = doc.toObject(ShoeModel::class.java).copy(id = doc.id)
-                adminShoeList.add(shoe)
-                shoeNames.add("${shoe.brand} ${shoe.modelName}")
+            if (snapshots != null) {
+                adminShoeList.clear()
+                shoeNames.clear()
+                for (doc in snapshots) {
+                    val shoe = doc.toObject(ShoeModel::class.java).copy(id = doc.id)
+                    adminShoeList.add(shoe)
+                    shoeNames.add("${shoe.brand} ${shoe.modelName} - ${shoe.resellPrice} PLN")
+                }
+                (binding.adminListView.adapter as ArrayAdapter<*>).notifyDataSetChanged()
             }
-            (binding.adminListView.adapter as ArrayAdapter<*>).notifyDataSetChanged()
         }
     }
 
-    private fun addShoeToFirestore() {
-        val shoe = ShoeModel(
-            brand = binding.etBrand.text.toString(),
-            modelName = binding.etModel.text.toString(),
-            releaseYear = binding.etYear.text.toString().toIntOrNull() ?: 0,
-            resellPrice = binding.etPrice.text.toString().toIntOrNull() ?: 0,
-            imageUrl = binding.etImageUrl.text.toString()
+    private fun loadShoeIntoForm(position: Int) {
+        val shoe = adminShoeList[position]
+
+        binding.etBrand.setText(shoe.brand)
+        binding.etModel.setText(shoe.modelName)
+        binding.etYear.setText(shoe.releaseYear.toString())
+        binding.etPrice.setText(shoe.resellPrice.toString())
+        binding.etImageUrl.setText(shoe.imageUrl)
+
+        editingShoeId = shoe.id
+        binding.btnAddShoe.text = "ZAKTUALIZUJ DANE"
+        binding.btnAddShoe.setBackgroundColor(Color.BLUE)
+        Toast.makeText(this, "Tryb edycji: ${shoe.modelName}", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleFormSubmit() {
+        val brand = binding.etBrand.text.toString().trim()
+        val model = binding.etModel.text.toString().trim()
+        val year = binding.etYear.text.toString().toIntOrNull() ?: 0
+        val price = binding.etPrice.text.toString().toIntOrNull() ?: 0
+        val url = binding.etImageUrl.text.toString().trim()
+
+        if (brand.isEmpty() || model.isEmpty()) {
+            Toast.makeText(this, "Wypełnij przynajmniej markę i model!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val shoeData = mapOf(
+            "brand" to brand,
+            "modelName" to model,
+            "releaseYear" to year,
+            "resellPrice" to price,
+            "imageUrl" to url
         )
 
-        db.collection("sneakers").add(shoe).addOnSuccessListener {
-            Toast.makeText(this, "Dodano pomyślnie!", Toast.LENGTH_SHORT).show()
-            clearFields()
+        if (editingShoeId == null) {
+            db.collection("sneakers").add(shoeData).addOnSuccessListener {
+                Toast.makeText(this, "Dodano nowy but!", Toast.LENGTH_SHORT).show()
+                resetForm()
+            }
+        } else {
+            db.collection("sneakers").document(editingShoeId!!).update(shoeData)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Zaktualizowano pomyślnie!", Toast.LENGTH_SHORT).show()
+                    resetForm()
+                }
         }
     }
 
-    private fun deleteShoe(id: String, position: Int) {
+    private fun deleteShoe(id: String) {
         if (id.isEmpty()) return
         db.collection("sneakers").document(id).delete().addOnSuccessListener {
-            Toast.makeText(this, "Usunięto buta!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Usunięto z bazy!", Toast.LENGTH_SHORT).show()
+            if (id == editingShoeId) resetForm()
         }
     }
 
-    private fun clearFields() {
+    private fun resetForm() {
         binding.etBrand.text.clear()
         binding.etModel.text.clear()
         binding.etYear.text.clear()
         binding.etPrice.text.clear()
         binding.etImageUrl.text.clear()
+
+        editingShoeId = null
+        binding.btnAddShoe.text = "DODAJ DO BAZY"
+        binding.btnAddShoe.setBackgroundColor(Color.BLACK)
     }
 }
