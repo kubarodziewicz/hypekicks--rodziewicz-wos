@@ -1,5 +1,6 @@
 package com.example.hyperkicks
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -30,6 +31,11 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        binding.adminButton.setOnClickListener {
+            val intent = Intent(this, AdminPanelActivity::class.java)
+            startActivity(intent)
         }
 
         //seedDatabase()

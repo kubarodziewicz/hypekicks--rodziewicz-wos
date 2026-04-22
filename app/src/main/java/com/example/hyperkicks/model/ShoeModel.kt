@@ -1,9 +1,10 @@
 package com.example.hyperkicks.model
 
 data class ShoeModel(
-    val brand: String = "adidas",
+    val brand: String = "",
     val modelName: String = "Samba Vegan White Black",
     val releaseYear: Int = 6767,
     val resellPrice: Int = 420,
-    val imageUrl: String = "https://i.postimg.cc/bNJC21YC/xd.webp"
+    val imageUrl: String = "https://i.postimg.cc/bNJC21YC/xd.webp",
+    val id: String = ""
 ): java.io.Serializable
