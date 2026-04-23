@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        binding.adminButton.setOnClickListener {
+        binding.adminTextView.setOnClickListener {
             val intent = Intent(this, AdminPanelActivity::class.java)
             startActivity(intent)
         }
