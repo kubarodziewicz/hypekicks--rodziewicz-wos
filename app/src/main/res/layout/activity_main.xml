@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#F0D16A">
 
     <TextView
         android:id="@+id/adminTextView"
@@ -18,7 +19,7 @@
         android:padding="8dp"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:background="#AA99BB"/>
+        android:background="#A97CEF"/>
 
     <androidx.appcompat.widget.SearchView
         android:layout_width="match_parent"
@@ -30,7 +31,9 @@
     <GridView
         android:id="@+id/kickGridView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:verticalSpacing="8dp"/>
 
 
 </LinearLayout>

@@ -3,6 +3,7 @@ package com.example.hyperkicks
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     lateinit var shoeList: MutableList<ShoeModel>
+    lateinit var adapter: ShoeAdapter
     val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +43,9 @@ class MainActivity : AppCompatActivity() {
         //seedDatabase()
 
         shoeList = mutableListOf()
+        adapter = ShoeAdapter(this, shoeList)
+
+        binding.kickGridView.adapter = adapter
 
         fetchDataFromDatabase()
     }
@@ -59,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
                     shoeList.add(ShoeModel(brand, modelName, releaseYear, resellPrice, imageUrl))
                 }
-                //adapter.notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
                 Toast.makeText(this, "Załadowano ${shoeList.size} butów!!", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { exception ->
                 Log.e("FIREBASE_ERROR", "Błąd pobierania danych: ", exception)
@@ -75,70 +80,70 @@ class MainActivity : AppCompatActivity() {
                 modelName = "Campus 00s Grey White",
                 releaseYear = 2022,
                 resellPrice = 450,
-                imageUrl = "https://i.postimg.cc/HsxZ7bWy/adidas-Campus-00s.webp"
+                imageUrl = "https://i.postimg.cc/wMkhCMcN/adidas-Campus-00s.png"
             ),
             ShoeModel(
                 brand = "adidas",
                 modelName = "Handball Spezial Light Blue",
                 releaseYear = 1979,
                 resellPrice = 480,
-                imageUrl = "https://i.postimg.cc/hPjy7V4V/adidas-Handball-Spezial.webp"
+                imageUrl = "https://i.postimg.cc/D0fWbgLN/adidas-Handball-Spezial.png"
             ),
             ShoeModel(
                 brand = "adidas",
                 modelName = "Superstar II White Black",
                 releaseYear = 1969,
                 resellPrice = 400,
-                imageUrl = "https://i.postimg.cc/Wb3WJ0pM/adidas-Superstar-II.webp"
+                imageUrl = "https://i.postimg.cc/Y024m3YV/adidas-Superstar-II.png"
             ),
             ShoeModel(
                 brand = "adidas",
                 modelName = "XLG Runner Deluxe Gray",
                 releaseYear = 2023,
                 resellPrice = 520,
-                imageUrl = "https://i.postimg.cc/ZKR7y6Yp/adidas-XLG-Runner-Deluxe-Gray.webp"
+                imageUrl = "https://i.postimg.cc/4y1zDybt/adidas-XLG-Runner-Deluxe-Gray.png"
             ),
             ShoeModel(
                 brand = "BAPE",
                 modelName = "Sk8 Sta Low Black White",
                 releaseYear = 2021,
                 resellPrice = 1200,
-                imageUrl = "https://i.postimg.cc/rFmnt5yG/BAPE-Sk8-Sta-Low.webp"
+                imageUrl = "https://i.postimg.cc/GtjkWtJk/BAPE-Sk8-Sta-Low.png"
             ),
             ShoeModel(
                 brand = "Nike",
                 modelName = "Air Jordan 4 Retro Military Black",
                 releaseYear = 2022,
                 resellPrice = 2100,
-                imageUrl = "https://i.postimg.cc/m2DXF7ZN/but67.webp"
+                imageUrl = "https://i.postimg.cc/QCNBWb1Y/but67.png"
             ),
             ShoeModel(
                 brand = "New Balance",
                 modelName = "530 White Silver Navy",
                 releaseYear = 1992,
                 resellPrice = 430,
-                imageUrl = "https://i.postimg.cc/tCTSVFRN/New-Balance-530.webp"
+                imageUrl = "https://i.postimg.cc/QCqp2Ckb/New-Balance-530.png"
             ),
             ShoeModel(
                 brand = "Nike",
                 modelName = "Air Force 1 LE Triple White",
                 releaseYear = 1982,
                 resellPrice = 450,
-                imageUrl = "https://i.postimg.cc/DyZjb1f6/Nike-Air-Force-1-LE.webp"
+                imageUrl = "https://i.postimg.cc/mkSQvkN8/Nike-Air-Force-1-LE.png"
             ),
             ShoeModel(
                 brand = "Nike",
                 modelName = "Shox TL White Metallic Silver",
                 releaseYear = 2019,
                 resellPrice = 950,
-                imageUrl = "https://i.postimg.cc/jd5gJyqX/Nike-Shox-TL-AR3566-100.jpg"
+                imageUrl = "https://i.postimg.cc/yxTFMxXT/Nike-Shox-TL-AR3566-100.png"
             ),
             ShoeModel(
                 brand = "Vans",
                 modelName = "Knu Skool Black White",
                 releaseYear = 1998,
                 resellPrice = 350,
-                imageUrl = "https://i.postimg.cc/vHBq658P/Vans-Knu-Skool.webp"
+                imageUrl = "https://i.postimg.cc/cCcQpCMh/Vans-Knu-Skool.png"
             )
         )
 
