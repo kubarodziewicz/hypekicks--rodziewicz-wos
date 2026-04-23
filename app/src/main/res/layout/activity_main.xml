@@ -9,9 +9,28 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/adminButton"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/adminTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="HypeKicks"
+        android:gravity="center"
+        android:padding="8dp"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:background="#AA99BB"/>
+
+    <androidx.appcompat.widget.SearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:iconifiedByDefault="false"
+        app:queryHint="Szukaj buta"
+        />
+
+    <GridView
+        android:id="@+id/kickGridView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
 
 </LinearLayout>
