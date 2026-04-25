@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     lateinit var shoeList: MutableList<ShoeModel>
+    lateinit var realShoeList: MutableList<ShoeModel>
     lateinit var adapter: ShoeAdapter
     val db = FirebaseFirestore.getInstance()
 
@@ -42,18 +43,33 @@ class MainActivity : AppCompatActivity() {
 
         //seedDatabase()
 
+        realShoeList = mutableListOf()
         shoeList = mutableListOf()
         adapter = ShoeAdapter(this, shoeList)
 
         binding.kickGridView.adapter = adapter
 
         fetchDataFromDatabase()
+
+        binding.mainSearchView.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                filterShoes(p0 ?: "")
+                return true
+            }
+
+        } )
+
     }
 
     private fun fetchDataFromDatabase() {
         db.collection("sneakers")
             .get()
             .addOnSuccessListener { documents ->
+                realShoeList.clear()
                 shoeList.clear()
                 for (doc in documents) {
                     val brand = doc.getString("brand") ?: "adidas"
@@ -62,8 +78,9 @@ class MainActivity : AppCompatActivity() {
                     val resellPrice = doc.getLong("resellPrice")?.toInt() ?: 420
                     val imageUrl = doc.getString("imageUrl") ?: "https://i.postimg.cc/bNJC21YC/xd.webp"
 
-                    shoeList.add(ShoeModel(brand, modelName, releaseYear, resellPrice, imageUrl))
+                    realShoeList.add(ShoeModel(brand, modelName, releaseYear, resellPrice, imageUrl))
                 }
+                shoeList.addAll(realShoeList)
                 adapter.notifyDataSetChanged()
                 Toast.makeText(this, "Załadowano ${shoeList.size} butów!!", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { exception ->
@@ -72,6 +89,23 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+
+    private fun filterShoes(query: String) {
+        val lowerCaseQuery = query.lowercase()
+
+        shoeList.clear()
+
+        if(lowerCaseQuery == "") shoeList.addAll(realShoeList)
+        else {
+            for(shoe in realShoeList) {
+                if(shoe.modelName.lowercase().contains(lowerCaseQuery)) {
+                    shoeList.add(shoe)
+                }
+            }
+        }
+
+        adapter.notifyDataSetChanged()
+    }
 
     private fun seedDatabase() {
         val shoeList = listOf(
