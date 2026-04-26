@@ -60,8 +60,16 @@ class MainActivity : AppCompatActivity() {
                 filterShoes(p0 ?: "")
                 return true
             }
+        })
 
-        } )
+        binding.kickGridView.setOnItemClickListener{ _, _, position, _ ->
+            val selectedShoe = shoeList[position]
+            val intent = android.content.Intent(this, DetailsActivity::class.java)
+
+            intent.putExtra("SHOE_DATA", selectedShoe)
+            startActivity(intent)
+
+        }
 
     }
 

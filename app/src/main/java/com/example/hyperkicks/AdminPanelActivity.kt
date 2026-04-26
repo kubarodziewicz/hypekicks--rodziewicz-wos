@@ -39,6 +39,10 @@ class AdminPanelActivity : AppCompatActivity() {
             deleteShoe(shoeToDelete.id)
             true
         }
+
+        binding.backBtn.setOnClickListener {
+            finish()
+        }
     }
 
     private fun setupListView() {
